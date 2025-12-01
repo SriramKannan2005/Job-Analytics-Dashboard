@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Suppress console warnings early - before any other scripts load
+        (function() {
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            
+            console.warn = function(...args) {
+                const message = args[0]?.toString() || '';
+                if (message.includes('Permissions policy violation') || 
+                    message.includes('unload is not allowed')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                const message = args[0]?.toString() || '';
+                if (message.includes('Permissions policy violation') || 
+                    message.includes('unload is not allowed')) {
+                    return;
+                }
+                originalError.apply(console, args);
+            };
+            
+            // Intercept window errors
+            const originalOnError = window.onerror;
+            window.onerror = function(message, source, lineno, colno, error) {
+                if (typeof message === 'string' && 
+                    (message.includes('Permissions policy violation') || 
+                     message.includes('unload is not allowed'))) {
+                    return true;
+                }
+                if (originalOnError) {
+                    return originalOnError.apply(this, arguments);
+                }
+                return false;
+            };
+        })();
+    </script>
+</head>
+<body>
+    <!-- Dark Blob Animated Background -->
+    <div class="animated-background">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+    </div>
+
+    <!-- Developer Mode Notification -->
+    <div class="dev-notification" id="devNotification">
+        🔧 Developer Mode Activated
+    </div>
+
+    <!-- Back Button -->
+    <button class="back-button" id="backButton">
+        <span>←</span>
+        <span>Back to Welcome</span>
+    </button>
+
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen">
+        <div class="welcome-content">
+            <div class="welcome-badge">✨ Analytics Platform</div>
+            <h1>Welcome to the Job Analytics Dashboard</h1>
+            <p class="welcome-subtitle">Real-time insights powered by advanced analytics</p>
+            <div class="clock-container">
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div class="welcome-clock" id="welcomeClock">00:00:00</div>
+                    <span class="time-period" id="welcomePeriod">AM</span>
+                </div>
+                <div class="current-date" id="currentDate">Loading...</div>
+            </div>
+            <button class="access-button" id="accessButton">
+                Access Dashboard →
+            </button>
+            <div class="welcome-features">
+                <div class="feature-item">
+                    <span>🔒</span>
+                    <span>Secure Access</span>
+                </div>
+                <div class="feature-item">
+                    <span>⚡</span>
+                    <span>Real-time Data</span>
+                </div>
+                <div class="feature-item">
+                    <span>📊</span>
+                    <span>Advanced Analytics</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage">
+        <!-- Waiting Screen -->
+        <div id="waitingScreen" class="waiting-screen">
+            <h2>⏰ Dashboard Access Restricted</h2>
+            <p>Dashboard available only between 3:00 PM and 5:00 PM IST</p>
+            <div class="countdown-container">
+                <div class="countdown-label">Time remaining until next access window:</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                    <div class="countdown-timer" id="countdownTimer">00:00:00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div id="mainDashboard" style="display: none;">
+            <div class="dashboard-wrapper">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="status-item">
+                        <div class="status-icon">🕒</div>
+                        <div class="status-info">
+                            <h3>Current Time (IST)</h3>
+                            <p id="statusTime">--:--:-- --</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon">✅</div>
+                        <div class="status-info">
+                            <h3>Access Status</h3>
+                            <p>Active</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon">📅</div>
+                        <div class="status-info">
+                            <h3>Today's Date</h3>
+                            <p id="statusDate">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-header">
+                    <h1>Live Job Analytics Dashboard</h1>
+                    <p>Real-time insights and comprehensive data visualization</p>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="charts-header">
+                        <h2>📊 Dashboard Analytics</h2>
+                        <button class="refresh-button" id="refreshButton">
+                            🔄 Refresh Data
+                        </button>
+                    </div>
+                    <div class="tableau-container">
+                        <iframe 
+                            id="tableauIframe"
+                            src="https://public.tableau.com/views/Book1_17642523326290/Dashboard1?:showVizHome=no&:embed=true&:device=desktop"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
